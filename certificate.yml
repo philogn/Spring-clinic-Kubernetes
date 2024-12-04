@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+
+kind: Certificate
+metadata:
+  name: petclinic-tls
+spec:
+  secretName: petclinic
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: web-deploy.io.vn
+  dnsNames:
+    - web-deploy.io.vn
+    - www.web-deploy.io.vn

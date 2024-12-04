@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: db-deployment
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels:
+      component: db
+  template: 
+    metadata:
+      labels:
+        component: db
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  component: db  # Match the pods you want to distribute
+              topologyKey: kubernetes.io/hostname  # Distribute across nodes
+      volumes:
+        - name: db-pv-volume
+          persistentVolumeClaim:
+            claimName: db-pv-claim
+      containers: 
+        - name: sql-db
+          image: mysql:8.4
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: db-pv-volume
+              mountPath: "/var/lib/mysql"
+          env:
+            - name: MYSQL_ROOT_PASSWORD 
+              value:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "true"
+            - name: MYSQL_USER
+              value: petclinic
+            - name: MYSQL_PASSWORD
+              value: petclinic
+            - name: MYSQL_DATABASE
+              value: petclinic
+      securityContext:
+          fsGroup: 999
+          runAsUser: 999
+

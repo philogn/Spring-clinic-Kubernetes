@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: server-deployment
+spec: 
+  replicas: 6
+  selector:
+    matchLabels: 
+      component: web
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+        - name: server
+          image: logng404/pet-clinic
+          ports: 
+          - containerPort: 8888
+          env:
+            - name: spring.datasource.url
+              value: "jdbc:mysql://db-clusterip:3306/petclinic" 
+
